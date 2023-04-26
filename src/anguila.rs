@@ -6,7 +6,7 @@ use bevy::{
 #[derive(Component)]
 pub struct PlayerMovement;
 
-pub fn setup_snake(mut commands: Commands) {
+pub fn setup_anguila(mut commands: Commands) {
     commands.spawn((
         {
             SpriteBundle {
