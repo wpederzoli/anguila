@@ -40,6 +40,7 @@ pub fn target_collision(
     for (entity, position, _) in &mut targets {
         if is_colliding(position.translation, anguila.translation) {
             commands.entity(entity).remove::<SpriteBundle>();
+            commands.entity(entity).remove::<Target>();
         }
     }
 }
