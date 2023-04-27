@@ -1,15 +1,28 @@
 use bevy::{
-    prelude::{default, Color, Commands, Component, Entity, Query, Transform, Vec3, With},
+    prelude::{default, Color, Commands, Component, Query, Transform, Vec3},
     sprite::{Sprite, SpriteBundle},
 };
 
-use crate::targets::{Target, TARGET_HEIGHT, TARGET_WIDTH};
-
 pub const ANGUILA_WIDTH: f32 = 20.0;
 pub const ANGUILA_HEIGHT: f32 = 20.0;
+const ANGUILA_SPEED: f32 = 1.0;
+const DIAGONAL_SPEED: f32 = ANGUILA_SPEED * 0.75;
+
+pub enum Direction {
+    Up,
+    Down,
+    Left,
+    LeftUp,
+    LeftDown,
+    Right,
+    RightUp,
+    RightDown,
+}
 
 #[derive(Component)]
-pub struct PlayerMovement;
+pub struct PlayerMovement {
+    pub direction: Direction,
+}
 
 pub fn setup_anguila(mut commands: Commands) {
     commands.spawn((
@@ -26,32 +39,35 @@ pub fn setup_anguila(mut commands: Commands) {
                 ..default()
             }
         },
-        PlayerMovement,
+        PlayerMovement {
+            direction: Direction::Up,
+        },
     ));
 }
 
-pub fn target_collision(
-    mut commands: Commands,
-    mut targets: Query<(Entity, &Transform, &Target)>,
-    player: Query<&Transform, With<PlayerMovement>>,
-) {
-    let anguila = player.single();
-
-    for (entity, position, _) in &mut targets {
-        if is_colliding(position.translation, anguila.translation) {
-            commands.entity(entity).remove::<SpriteBundle>();
-            commands.entity(entity).remove::<Target>();
+pub fn move_anguila(mut anguila: Query<(&mut Transform, &mut PlayerMovement)>) {
+    for (mut transform, player) in anguila.iter_mut() {
+        match player.direction {
+            Direction::Up => transform.translation.y += ANGUILA_SPEED,
+            Direction::Down => transform.translation.y -= ANGUILA_SPEED,
+            Direction::Left => transform.translation.x -= ANGUILA_SPEED,
+            Direction::Right => transform.translation.x += ANGUILA_SPEED,
+            Direction::LeftUp => {
+                transform.translation.x -= DIAGONAL_SPEED;
+                transform.translation.y += DIAGONAL_SPEED;
+            }
+            Direction::LeftDown => {
+                transform.translation.x -= DIAGONAL_SPEED;
+                transform.translation.y -= DIAGONAL_SPEED;
+            }
+            Direction::RightUp => {
+                transform.translation.x += DIAGONAL_SPEED;
+                transform.translation.y += DIAGONAL_SPEED;
+            }
+            Direction::RightDown => {
+                transform.translation.x += DIAGONAL_SPEED;
+                transform.translation.y -= DIAGONAL_SPEED;
+            }
         }
     }
-}
-
-fn is_colliding(target: Vec3, anguila: Vec3) -> bool {
-    if anguila.x + ANGUILA_WIDTH / 2.0 >= target.x - TARGET_WIDTH / 2.0
-        && anguila.y + ANGUILA_HEIGHT / 2.0 >= target.y - TARGET_HEIGHT / 2.0
-        && anguila.x - ANGUILA_WIDTH / 2.0 <= target.x + TARGET_WIDTH / 2.0
-        && anguila.y - ANGUILA_HEIGHT / 2.0 <= target.y + TARGET_HEIGHT / 2.0
-    {
-        return true;
-    }
-    false
 }
