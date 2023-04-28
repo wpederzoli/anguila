@@ -3,16 +3,19 @@ use bevy::prelude::*;
 mod anguila;
 mod collision;
 mod input;
+mod segment;
 mod targets;
 
 use anguila::{move_anguila, setup_anguila};
 use collision::target_collision;
 use input::handle_input;
+use segment::Segments;
 use targets::{spawn_targets, SPAWN_TIME};
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
+        .insert_resource(Segments(Vec::new()))
         .add_startup_system(setup_camera)
         .add_startup_system(setup_anguila)
         .add_systems((move_anguila, handle_input, target_collision))

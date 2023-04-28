@@ -8,6 +8,7 @@ pub const ANGUILA_HEIGHT: f32 = 20.0;
 const ANGUILA_SPEED: f32 = 1.0;
 const DIAGONAL_SPEED: f32 = ANGUILA_SPEED * 0.75;
 
+#[derive(Clone, Copy)]
 pub enum MoveDirection {
     Up,
     Down,
