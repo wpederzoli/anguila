@@ -23,8 +23,8 @@ pub fn target_collision(
                 add_segment(
                     &mut segments.0,
                     &mut commands,
-                    player_pos.translation,
-                    player_dir.0,
+                    &player_pos.translation,
+                    &player_dir.0,
                 );
             }
         }
