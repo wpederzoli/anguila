@@ -16,7 +16,7 @@ pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDir
     commands.spawn((
         SpriteBundle {
             sprite: Sprite {
-                color: Color::RED,
+                color: Color::rgba(0.1, 0.7, 0.3, 0.2),
                 ..default()
             },
             transform: Transform {
@@ -52,13 +52,38 @@ pub fn move_segments(
 
 fn get_new_segment(position: &Vec3, direction: &MoveDirection) -> Segment {
     match direction {
-        MoveDirection::Up => {
-            return Segment(
-                Vec2::new(position.x, position.y - ANGUILA_HEIGHT),
-                *direction,
-            );
-        }
-        _ => Segment(Vec2::new(position.x, position.y), *direction),
+        MoveDirection::Up => Segment(
+            Vec2::new(position.x, position.y - ANGUILA_HEIGHT),
+            *direction,
+        ),
+        MoveDirection::Down => Segment(
+            Vec2::new(position.x, position.y + ANGUILA_HEIGHT),
+            *direction,
+        ),
+        MoveDirection::Left => Segment(
+            Vec2::new(position.x + ANGUILA_WIDTH, position.y),
+            *direction,
+        ),
+        MoveDirection::Right => Segment(
+            Vec2::new(position.x - ANGUILA_WIDTH, position.y),
+            *direction,
+        ),
+        MoveDirection::LeftUp => Segment(
+            Vec2::new(position.x + ANGUILA_WIDTH, position.y - ANGUILA_HEIGHT),
+            *direction,
+        ),
+        MoveDirection::RightUp => Segment(
+            Vec2::new(position.x - ANGUILA_WIDTH, position.y - ANGUILA_HEIGHT),
+            *direction,
+        ),
+        MoveDirection::LeftDown => Segment(
+            Vec2::new(position.x - ANGUILA_WIDTH, position.y + ANGUILA_HEIGHT),
+            *direction,
+        ),
+        MoveDirection::RightDown => Segment(
+            Vec2::new(position.x + ANGUILA_WIDTH, position.y + ANGUILA_HEIGHT),
+            *direction,
+        ),
     }
 }
 

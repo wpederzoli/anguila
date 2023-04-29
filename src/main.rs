@@ -14,7 +14,13 @@ use targets::{spawn_targets, SPAWN_TIME};
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                title: "Anguila".to_string(),
+                ..default()
+            }),
+            ..default()
+        }))
         .add_startup_system(setup_camera)
         .add_startup_system(setup_anguila)
         .add_systems((handle_input, target_collision, move_anguila, move_segments))

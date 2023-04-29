@@ -31,7 +31,7 @@ pub fn setup_anguila(mut commands: Commands) {
         {
             SpriteBundle {
                 sprite: Sprite {
-                    color: Color::ANTIQUE_WHITE,
+                    color: Color::rgba(0.1, 0.7, 0.3, 0.5),
                     ..default()
                 },
                 transform: Transform {
