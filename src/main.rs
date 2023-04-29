@@ -9,13 +9,12 @@ mod targets;
 use anguila::{move_anguila, setup_anguila};
 use collision::target_collision;
 use input::handle_input;
-use segment::{move_segments, Segments};
+use segment::move_segments;
 use targets::{spawn_targets, SPAWN_TIME};
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .insert_resource(Segments(Vec::new()))
         .add_startup_system(setup_camera)
         .add_startup_system(setup_anguila)
         .add_systems((handle_input, target_collision, move_anguila, move_segments))

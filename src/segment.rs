@@ -1,8 +1,6 @@
 use crate::anguila::{Anguila, Direction, MoveDirection, ANGUILA_HEIGHT, ANGUILA_WIDTH};
 use bevy::{
-    prelude::{
-        default, Color, Commands, Component, Query, Resource, Transform, Vec2, Vec3, With, Without,
-    },
+    prelude::{default, Color, Commands, Component, Query, Transform, Vec2, Vec3, With, Without},
     sprite::{Sprite, SpriteBundle},
 };
 
@@ -12,26 +10,9 @@ const SEGMENT_HEIGHT: f32 = 12.0;
 #[derive(Component, Clone, Copy)]
 pub struct Segment(pub Vec2, pub MoveDirection);
 
-#[derive(Resource)]
-pub struct Segments(pub Vec<Segment>);
+pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDirection) {
+    let new_segment = get_new_segment(&position, &direction);
 
-pub fn add_segment(
-    segments: &mut Vec<Segment>,
-    commands: &mut Commands,
-    position: &Vec3,
-    direction: &MoveDirection,
-) {
-    let mut pos = *position;
-    let mut dir = *direction;
-
-    if let Some(last_segment) = segments.last() {
-        pos = Vec3::new(last_segment.0.x, last_segment.0.y, 0.0);
-        dir = last_segment.1
-    }
-
-    let new_segment = get_new_segment(&pos, &dir);
-
-    segments.push(new_segment);
     commands.spawn((
         SpriteBundle {
             sprite: Sprite {
