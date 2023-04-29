@@ -1,8 +1,7 @@
 use crate::anguila::{Anguila, Direction, MoveDirection, ANGUILA_HEIGHT, ANGUILA_WIDTH};
 use bevy::{
     prelude::{
-        default, Color, Commands, Component, Query, ResMut, Resource, Transform, Vec2, Vec3, With,
-        Without,
+        default, Color, Commands, Component, Query, Resource, Transform, Vec2, Vec3, With, Without,
     },
     sprite::{Sprite, SpriteBundle},
 };
@@ -59,11 +58,7 @@ pub fn move_segments(
     let mut player_dir = player.1 .0;
 
     for (mut seg_pos, mut segment) in &mut segments {
-        let next_pos = Vec3::new(
-            player_pos.x + ANGUILA_WIDTH,
-            player_pos.y + ANGUILA_HEIGHT,
-            0.0,
-        );
+        let next_pos = get_next_position(&player_pos, &player_dir);
         let next_dir = segment.1;
 
         seg_pos.translation = next_pos;
@@ -83,5 +78,26 @@ fn get_new_segment(position: &Vec3, direction: &MoveDirection) -> Segment {
             );
         }
         _ => Segment(Vec2::new(position.x, position.y), *direction),
+    }
+}
+
+fn get_next_position(position: &Vec3, direction: &MoveDirection) -> Vec3 {
+    match *direction {
+        MoveDirection::Up => Vec3::new(position.x, position.y - ANGUILA_HEIGHT, 0.0),
+        MoveDirection::Down => Vec3::new(position.x, position.y + ANGUILA_HEIGHT, 0.0),
+        MoveDirection::Left => Vec3::new(position.x + ANGUILA_WIDTH, position.y, 0.0),
+        MoveDirection::LeftUp => {
+            Vec3::new(position.x + ANGUILA_WIDTH, position.y - ANGUILA_HEIGHT, 0.0)
+        }
+        MoveDirection::LeftDown => {
+            Vec3::new(position.x + ANGUILA_WIDTH, position.y + ANGUILA_HEIGHT, 0.0)
+        }
+        MoveDirection::Right => Vec3::new(position.x - ANGUILA_WIDTH, position.y, 0.0),
+        MoveDirection::RightUp => {
+            Vec3::new(position.x - ANGUILA_WIDTH, position.y - ANGUILA_HEIGHT, 0.0)
+        }
+        MoveDirection::RightDown => {
+            Vec3::new(position.x - ANGUILA_WIDTH, position.y + ANGUILA_HEIGHT, 0.0)
+        }
     }
 }
