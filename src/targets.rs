@@ -15,13 +15,12 @@ pub fn spawn_targets(mut commands: Commands) {
     let spawn = rand::thread_rng().gen_range(0..2);
 
     if spawn > 0 {
-        let spawn_x = rand::thread_rng().gen_range(-500..500) as f32; // TODO: account for window width
-        let spawn_y = rand::thread_rng().gen_range(-500..500) as f32; // TODO: account for window height
-
+        let spawn_x = rand::thread_rng().gen_range(-100..100) as f32; // TODO: account for window width
+        let spawn_y = rand::thread_rng().gen_range(-100..100) as f32; // TODO: account for window height
         commands.spawn((
             SpriteBundle {
                 sprite: Sprite {
-                    color: Color::SEA_GREEN,
+                    color: Color::rgba(0.1, 0.4, 0.8, 0.8),
                     ..default()
                 },
                 transform: Transform {

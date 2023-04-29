@@ -1,41 +1,41 @@
-use bevy::prelude::{Input, KeyCode, Query, Res};
+use bevy::prelude::{Input, KeyCode, Query, Res, With};
 
-use crate::anguila::{Direction, PlayerMovement};
+use crate::anguila::{Anguila, Direction, MoveDirection};
 
-pub fn handle_input(key: Res<Input<KeyCode>>, mut query: Query<&mut PlayerMovement>) {
-    let mut anguila = query.single_mut();
+pub fn handle_input(key: Res<Input<KeyCode>>, mut query: Query<&mut Direction, With<Anguila>>) {
+    let mut direction = query.single_mut();
 
     if key.pressed(KeyCode::Left) {
         if key.pressed(KeyCode::Up) {
-            anguila.direction = Direction::LeftUp;
+            direction.0 = MoveDirection::LeftUp;
             return;
         }
         if key.pressed(KeyCode::Down) {
-            anguila.direction = Direction::LeftDown;
+            direction.0 = MoveDirection::LeftDown;
             return;
         }
 
-        anguila.direction = Direction::Left;
+        direction.0 = MoveDirection::Left;
     }
 
     if key.pressed(KeyCode::Right) {
         if key.pressed(KeyCode::Up) {
-            anguila.direction = Direction::RightUp;
+            direction.0 = MoveDirection::RightUp;
             return;
         }
         if key.pressed(KeyCode::Down) {
-            anguila.direction = Direction::RightDown;
+            direction.0 = MoveDirection::RightDown;
             return;
         }
 
-        anguila.direction = Direction::Right;
+        direction.0 = MoveDirection::Right;
     }
 
     if key.pressed(KeyCode::Up) {
-        anguila.direction = Direction::Up;
+        direction.0 = MoveDirection::Up;
     }
 
     if key.pressed(KeyCode::Down) {
-        anguila.direction = Direction::Down;
+        direction.0 = MoveDirection::Down;
     }
 }
