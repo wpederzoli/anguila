@@ -1,7 +1,8 @@
-use crate::anguila::{Anguila, Direction, MoveDirection};
+use crate::anguila::{Anguila, Direction, MoveDirection, ANGUILA_HEIGHT, ANGUILA_WIDTH};
 use bevy::{
     prelude::{
-        default, Color, Commands, Component, Query, ResMut, Resource, Transform, Vec2, Vec3,
+        default, Color, Commands, Component, Query, ResMut, Resource, Transform, Vec2, Vec3, With,
+        Without,
     },
     sprite::{Sprite, SpriteBundle},
 };
@@ -29,7 +30,7 @@ pub fn add_segment(
         dir = last_segment.1
     }
 
-    let new_segment = Segment(Vec2::new(pos.x, pos.y), dir);
+    let new_segment = get_new_segment(&pos, &dir);
 
     segments.push(new_segment);
     commands.spawn((
@@ -40,7 +41,7 @@ pub fn add_segment(
             },
             transform: Transform {
                 scale: Vec3::new(SEGMENT_WIDTH, SEGMENT_HEIGHT, 0.0),
-                translation: pos,
+                translation: Vec3::new(new_segment.0.x, new_segment.0.y, 0.0),
                 ..default()
             },
             ..default()
@@ -49,31 +50,38 @@ pub fn add_segment(
     ));
 }
 
-pub fn update_segments(
-    mut segments: ResMut<Segments>,
-    player: Query<(&Transform, &Anguila, &Direction)>,
+pub fn move_segments(
+    mut segments: Query<(&mut Transform, &mut Segment), Without<Anguila>>,
+    player: Query<(&Transform, &Direction), With<Anguila>>,
 ) {
-    if segments.0.len() > 0 {
-        for i in 0..segments.0.len() - 1 {
-            let index = segments.0.len() - i;
-            let direction = segments.0[index + 1].1;
-            let position = Vec2::new(segments.0[index + 1].0.x, segments.0[index + 1].0.y);
-            std::mem::replace(&mut segments.0[index], Segment(position, direction));
-        }
+    let player = player.single();
+    let mut player_pos = player.0.translation;
+    let mut player_dir = player.1 .0;
 
-        let anguila = player.single();
-        std::mem::replace(
-            &mut segments.0[0],
-            Segment(
-                Vec2::new(anguila.0.translation.x, anguila.0.translation.y),
-                anguila.2 .0,
-            ),
+    for (mut seg_pos, mut segment) in &mut segments {
+        let next_pos = Vec3::new(
+            player_pos.x + ANGUILA_WIDTH,
+            player_pos.y + ANGUILA_HEIGHT,
+            0.0,
         );
+        let next_dir = segment.1;
+
+        seg_pos.translation = next_pos;
+        segment.1 = player_dir;
+
+        player_pos = next_pos;
+        player_dir = next_dir;
     }
 }
 
-pub fn move_segments(mut segments: Query<(&mut Transform, &Segment)>) {
-    for (mut transform, seg) in &mut segments {
-        transform.translation = Vec3::new(seg.0.x, seg.0.y, 0.0);
+fn get_new_segment(position: &Vec3, direction: &MoveDirection) -> Segment {
+    match direction {
+        MoveDirection::Up => {
+            return Segment(
+                Vec2::new(position.x, position.y - ANGUILA_HEIGHT),
+                *direction,
+            );
+        }
+        _ => Segment(Vec2::new(position.x, position.y), *direction),
     }
 }
