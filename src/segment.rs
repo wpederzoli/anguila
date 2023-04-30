@@ -35,18 +35,21 @@ pub fn move_segments(
     player: Query<(&Transform, &Direction), With<Anguila>>,
 ) {
     let player = player.single();
-    let mut player_pos = player.0.translation;
-    let mut player_dir = player.1 .0;
+    let mut next_pos = player.0.translation;
+    let mut next_dir = player.1 .0;
 
     for (mut seg_pos, mut segment) in &mut segments {
-        let next_pos = get_next_position(&player_pos, &player_dir);
-        let next_dir = segment.1;
-
-        seg_pos.translation = next_pos;
-        segment.1 = player_dir;
-
-        player_pos = next_pos;
-        player_dir = next_dir;
+        if seg_pos.translation.x == segment.0.x && seg_pos.translation.y == segment.0.y {
+            let prev_pos = segment.0;
+            let prev_dir = segment.1;
+            segment.0 = Vec2::new(next_pos.x, next_pos.y);
+            segment.1 = next_dir;
+            next_pos = Vec3::new(prev_pos.x, prev_pos.y, 0.0);
+            next_dir = prev_dir;
+        } else {
+            seg_pos.translation = get_next_position(&next_pos, &segment.1);
+            next_pos = seg_pos.translation;
+        }
     }
 }
 
