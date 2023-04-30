@@ -13,68 +13,39 @@ pub fn handle_input(
     let (mut direction, transform) = player.single_mut();
 
     if key.pressed(KeyCode::Left) {
+        if let Some(mut segment) = segments.iter_mut().next() {
+            segment.0 = Vec2::new(transform.translation.x, transform.translation.y);
+        }
         if key.pressed(KeyCode::Up) {
-            if let Some(mut s) = segments.iter_mut().next() {
-                s.0 = Vec2::new(transform.translation.x, transform.translation.y);
-                s.1 = direction.0;
-            }
             direction.0 = MoveDirection::LeftUp;
             return;
         }
         if key.pressed(KeyCode::Down) {
-            if let Some(mut s) = segments.iter_mut().next() {
-                s.0 = Vec2::new(transform.translation.x, transform.translation.y);
-                s.1 = direction.0;
-            }
             direction.0 = MoveDirection::LeftDown;
             return;
         }
 
-        if let Some(mut s) = segments.iter_mut().next() {
-            s.0 = Vec2::new(transform.translation.x, transform.translation.y);
-            s.1 = direction.0;
-        }
         direction.0 = MoveDirection::Left;
     }
 
     if key.pressed(KeyCode::Right) {
         if key.pressed(KeyCode::Up) {
-            if let Some(mut s) = segments.iter_mut().next() {
-                s.0 = Vec2::new(transform.translation.x, transform.translation.y);
-                s.1 = direction.0;
-            }
             direction.0 = MoveDirection::RightUp;
             return;
         }
         if key.pressed(KeyCode::Down) {
-            if let Some(mut s) = segments.iter_mut().next() {
-                s.0 = Vec2::new(transform.translation.x, transform.translation.y);
-                s.1 = direction.0;
-            }
             direction.0 = MoveDirection::RightDown;
             return;
         }
 
-        if let Some(mut s) = segments.iter_mut().next() {
-            s.0 = Vec2::new(transform.translation.x, transform.translation.y);
-            s.1 = direction.0;
-        }
         direction.0 = MoveDirection::Right;
     }
 
     if key.pressed(KeyCode::Up) {
-        if let Some(mut s) = segments.iter_mut().next() {
-            s.0 = Vec2::new(transform.translation.x, transform.translation.y);
-            s.1 = direction.0;
-        }
         direction.0 = MoveDirection::Up;
     }
 
     if key.pressed(KeyCode::Down) {
-        if let Some(mut s) = segments.iter_mut().next() {
-            s.0 = Vec2::new(transform.translation.x, transform.translation.y);
-            s.1 = direction.0;
-        }
         direction.0 = MoveDirection::Down;
     }
 }

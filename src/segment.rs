@@ -1,4 +1,6 @@
-use crate::anguila::{Anguila, Direction, MoveDirection, ANGUILA_HEIGHT, ANGUILA_WIDTH};
+use crate::anguila::{
+    move_towards, Anguila, Direction, MoveDirection, ANGUILA_HEIGHT, ANGUILA_WIDTH,
+};
 use bevy::{
     prelude::{default, Color, Commands, Component, Query, Transform, Vec2, Vec3, With, Without},
     sprite::{Sprite, SpriteBundle},
@@ -34,21 +36,32 @@ pub fn move_segments(
     mut segments: Query<(&mut Transform, &mut Segment), Without<Anguila>>,
     player: Query<(&Transform, &Direction), With<Anguila>>,
 ) {
-    let player = player.single();
-    let mut next_pos = player.0.translation;
-    let mut next_dir = player.1 .0;
+    let (player_pos, player_dir) = player.single();
 
-    for (mut seg_pos, mut segment) in &mut segments {
-        if seg_pos.translation.x == segment.0.x && seg_pos.translation.y == segment.0.y {
-            let prev_pos = segment.0;
-            let prev_dir = segment.1;
-            segment.0 = Vec2::new(next_pos.x, next_pos.y);
-            segment.1 = next_dir;
-            next_pos = Vec3::new(prev_pos.x, prev_pos.y, 0.0);
-            next_dir = prev_dir;
+    for (mut pos, mut segment) in &mut segments {
+        let account_width = match segment.1 {
+            MoveDirection::Left | MoveDirection::LeftUp | MoveDirection::LeftDown => -ANGUILA_WIDTH,
+            MoveDirection::Right | MoveDirection::RightUp | MoveDirection::RightDown => {
+                ANGUILA_WIDTH
+            }
+            _ => 0.,
+        };
+        let account_height = match segment.1 {
+            MoveDirection::Up | MoveDirection::LeftUp | MoveDirection::RightUp => ANGUILA_HEIGHT,
+            MoveDirection::Down | MoveDirection::LeftDown | MoveDirection::RightDown => {
+                -ANGUILA_HEIGHT
+            }
+            _ => 0.,
+        };
+        let destination = Vec3::new(segment.0.x, segment.0.y, 0.0);
+        let distance = pos.translation - destination;
+        if distance.abs().length() != 0. {
+            move_towards(&mut pos.translation, &segment.1);
         } else {
-            seg_pos.translation = get_next_position(&next_pos, &segment.1);
-            next_pos = seg_pos.translation;
+            println!("change direction");
+            segment.0 = Vec2::new(player_pos.translation.x, player_pos.translation.y);
+            segment.1 = player_dir.0;
+            move_towards(&mut pos.translation, &segment.1);
         }
     }
 }
@@ -76,7 +89,7 @@ fn get_spawn_position(position: &Vec3, direction: &MoveDirection) -> Vec3 {
 
 fn get_next_position(position: &Vec3, direction: &MoveDirection) -> Vec3 {
     match *direction {
-        MoveDirection::Up => Vec3::new(position.x, position.y - ANGUILA_HEIGHT, 0.0),
+        MoveDirection::Up => Vec3::new(position.x, position.y + ANGUILA_HEIGHT, 0.0),
         MoveDirection::Down => Vec3::new(position.x, position.y + ANGUILA_HEIGHT, 0.0),
         MoveDirection::Left => Vec3::new(position.x + ANGUILA_WIDTH, position.y, 0.0),
         MoveDirection::LeftUp => {

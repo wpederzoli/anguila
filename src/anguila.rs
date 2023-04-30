@@ -1,14 +1,16 @@
 use bevy::{
-    prelude::{default, Color, Commands, Component, Query, Transform, Vec3},
+    prelude::{default, Color, Commands, Component, Query, Transform, Vec2, Vec3, With},
     sprite::{Sprite, SpriteBundle},
 };
+
+use crate::segment::Segment;
 
 pub const ANGUILA_WIDTH: f32 = 20.0;
 pub const ANGUILA_HEIGHT: f32 = 20.0;
 const ANGUILA_SPEED: f32 = 1.0;
 const DIAGONAL_SPEED: f32 = ANGUILA_SPEED * 0.75;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum MoveDirection {
     Up,
     Down,
@@ -46,29 +48,40 @@ pub fn setup_anguila(mut commands: Commands) {
     ));
 }
 
-pub fn move_anguila(mut anguila: Query<(&mut Transform, &Direction, &Anguila)>) {
-    for (mut transform, direction, _) in anguila.iter_mut() {
-        match direction.0 {
-            MoveDirection::Up => transform.translation.y += ANGUILA_SPEED,
-            MoveDirection::Down => transform.translation.y -= ANGUILA_SPEED,
-            MoveDirection::Left => transform.translation.x -= ANGUILA_SPEED,
-            MoveDirection::Right => transform.translation.x += ANGUILA_SPEED,
-            MoveDirection::LeftUp => {
-                transform.translation.x -= DIAGONAL_SPEED;
-                transform.translation.y += DIAGONAL_SPEED;
-            }
-            MoveDirection::LeftDown => {
-                transform.translation.x -= DIAGONAL_SPEED;
-                transform.translation.y -= DIAGONAL_SPEED;
-            }
-            MoveDirection::RightUp => {
-                transform.translation.x += DIAGONAL_SPEED;
-                transform.translation.y += DIAGONAL_SPEED;
-            }
-            MoveDirection::RightDown => {
-                transform.translation.x += DIAGONAL_SPEED;
-                transform.translation.y -= DIAGONAL_SPEED;
-            }
+pub fn move_anguila(
+    mut anguila: Query<(&mut Transform, &Direction), With<Anguila>>,
+    mut segments: Query<&mut Segment>,
+) {
+    let (mut transform, direction) = anguila.single_mut();
+    if let Some(mut segment) = segments.iter_mut().next() {
+        if segment.1 == direction.0 {
+            segment.0 = Vec2::new(transform.translation.x, transform.translation.y);
+        }
+    }
+    move_towards(&mut transform.translation, &direction.0);
+}
+
+pub fn move_towards(translation: &mut Vec3, direction: &MoveDirection) {
+    match direction {
+        MoveDirection::Up => translation.y += ANGUILA_SPEED,
+        MoveDirection::Down => translation.y -= ANGUILA_SPEED,
+        MoveDirection::Left => translation.x -= ANGUILA_SPEED,
+        MoveDirection::Right => translation.x += ANGUILA_SPEED,
+        MoveDirection::LeftUp => {
+            translation.x -= DIAGONAL_SPEED;
+            translation.y += DIAGONAL_SPEED;
+        }
+        MoveDirection::LeftDown => {
+            translation.x -= DIAGONAL_SPEED;
+            translation.y -= DIAGONAL_SPEED;
+        }
+        MoveDirection::RightUp => {
+            translation.x += DIAGONAL_SPEED;
+            translation.y += DIAGONAL_SPEED;
+        }
+        MoveDirection::RightDown => {
+            translation.x += DIAGONAL_SPEED;
+            translation.y -= DIAGONAL_SPEED;
         }
     }
 }
