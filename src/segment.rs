@@ -11,7 +11,7 @@ const SEGMENT_HEIGHT: f32 = 12.0;
 pub struct Segment(pub Vec2, pub MoveDirection);
 
 pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDirection) {
-    let new_segment = get_new_segment(&position, &direction);
+    let new_segment = Segment(Vec2::new(position.x, position.y), *direction);
 
     commands.spawn((
         SpriteBundle {
@@ -21,7 +21,7 @@ pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDir
             },
             transform: Transform {
                 scale: Vec3::new(SEGMENT_WIDTH, SEGMENT_HEIGHT, 0.0),
-                translation: Vec3::new(new_segment.0.x, new_segment.0.y, 0.0),
+                translation: get_spawn_position(&position, &direction),
                 ..default()
             },
             ..default()
@@ -50,40 +50,24 @@ pub fn move_segments(
     }
 }
 
-fn get_new_segment(position: &Vec3, direction: &MoveDirection) -> Segment {
+fn get_spawn_position(position: &Vec3, direction: &MoveDirection) -> Vec3 {
     match direction {
-        MoveDirection::Up => Segment(
-            Vec2::new(position.x, position.y - ANGUILA_HEIGHT),
-            *direction,
-        ),
-        MoveDirection::Down => Segment(
-            Vec2::new(position.x, position.y + ANGUILA_HEIGHT),
-            *direction,
-        ),
-        MoveDirection::Left => Segment(
-            Vec2::new(position.x + ANGUILA_WIDTH, position.y),
-            *direction,
-        ),
-        MoveDirection::Right => Segment(
-            Vec2::new(position.x - ANGUILA_WIDTH, position.y),
-            *direction,
-        ),
-        MoveDirection::LeftUp => Segment(
-            Vec2::new(position.x + ANGUILA_WIDTH, position.y - ANGUILA_HEIGHT),
-            *direction,
-        ),
-        MoveDirection::RightUp => Segment(
-            Vec2::new(position.x - ANGUILA_WIDTH, position.y - ANGUILA_HEIGHT),
-            *direction,
-        ),
-        MoveDirection::LeftDown => Segment(
-            Vec2::new(position.x - ANGUILA_WIDTH, position.y + ANGUILA_HEIGHT),
-            *direction,
-        ),
-        MoveDirection::RightDown => Segment(
-            Vec2::new(position.x + ANGUILA_WIDTH, position.y + ANGUILA_HEIGHT),
-            *direction,
-        ),
+        MoveDirection::Up => Vec3::new(position.x, position.y - ANGUILA_HEIGHT, 0.0),
+        MoveDirection::Down => Vec3::new(position.x, position.y + ANGUILA_HEIGHT, 0.0),
+        MoveDirection::Left => Vec3::new(position.x + ANGUILA_WIDTH, position.y, 0.0),
+        MoveDirection::Right => Vec3::new(position.x - ANGUILA_WIDTH, position.y, 0.0),
+        MoveDirection::LeftUp => {
+            Vec3::new(position.x + ANGUILA_WIDTH, position.y - ANGUILA_HEIGHT, 0.0)
+        }
+        MoveDirection::RightUp => {
+            Vec3::new(position.x - ANGUILA_WIDTH, position.y - ANGUILA_HEIGHT, 0.0)
+        }
+        MoveDirection::LeftDown => {
+            Vec3::new(position.x - ANGUILA_WIDTH, position.y + ANGUILA_HEIGHT, 0.0)
+        }
+        MoveDirection::RightDown => {
+            Vec3::new(position.x + ANGUILA_WIDTH, position.y + ANGUILA_HEIGHT, 0.0)
+        }
     }
 }
 

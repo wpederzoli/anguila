@@ -20,7 +20,7 @@ pub fn spawn_targets(mut commands: Commands) {
         commands.spawn((
             SpriteBundle {
                 sprite: Sprite {
-                    color: Color::rgba(0.1, 0.4, 0.8, 0.8),
+                    color: Color::rgba(1., 1., 1., 0.8),
                     ..default()
                 },
                 transform: Transform {
