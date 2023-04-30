@@ -37,32 +37,26 @@ pub fn move_segments(
     player: Query<(&Transform, &Direction), With<Anguila>>,
 ) {
     let (player_pos, player_dir) = player.single();
+    let mut next_pos = player_pos.translation;
+    let mut next_dir = player_dir.0;
 
     for (mut pos, mut segment) in &mut segments {
-        let account_width = match segment.1 {
-            MoveDirection::Left | MoveDirection::LeftUp | MoveDirection::LeftDown => -ANGUILA_WIDTH,
-            MoveDirection::Right | MoveDirection::RightUp | MoveDirection::RightDown => {
-                ANGUILA_WIDTH
-            }
-            _ => 0.,
-        };
-        let account_height = match segment.1 {
-            MoveDirection::Up | MoveDirection::LeftUp | MoveDirection::RightUp => ANGUILA_HEIGHT,
-            MoveDirection::Down | MoveDirection::LeftDown | MoveDirection::RightDown => {
-                -ANGUILA_HEIGHT
-            }
-            _ => 0.,
-        };
+        let last_pos = Vec3::new(segment.0.x, segment.0.y, 0.0);
+        let last_dir = segment.1;
         let destination = Vec3::new(segment.0.x, segment.0.y, 0.0);
         let distance = pos.translation - destination;
         if distance.abs().length() != 0. {
             move_towards(&mut pos.translation, &segment.1);
         } else {
             println!("change direction");
-            segment.0 = Vec2::new(player_pos.translation.x, player_pos.translation.y);
-            segment.1 = player_dir.0;
+            segment.0 = Vec2::new(next_pos.x, next_pos.y);
+            segment.1 = next_dir;
+            pos.translation = get_spawn_position(&next_pos, &next_dir);
             move_towards(&mut pos.translation, &segment.1);
         }
+
+        next_pos = last_pos;
+        next_dir = last_dir;
     }
 }
 

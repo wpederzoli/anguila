@@ -1,21 +1,11 @@
-use bevy::prelude::{Input, KeyCode, Query, Res, Transform, Vec2, With};
+use bevy::prelude::{Input, KeyCode, Query, Res, With};
 
-use crate::{
-    anguila::{Anguila, Direction, MoveDirection},
-    segment::Segment,
-};
+use crate::anguila::{Anguila, Direction, MoveDirection};
 
-pub fn handle_input(
-    key: Res<Input<KeyCode>>,
-    mut player: Query<(&mut Direction, &Transform), With<Anguila>>,
-    mut segments: Query<&mut Segment>,
-) {
-    let (mut direction, transform) = player.single_mut();
+pub fn handle_input(key: Res<Input<KeyCode>>, mut player: Query<&mut Direction, With<Anguila>>) {
+    let mut direction = player.single_mut();
 
     if key.pressed(KeyCode::Left) {
-        if let Some(mut segment) = segments.iter_mut().next() {
-            segment.0 = Vec2::new(transform.translation.x, transform.translation.y);
-        }
         if key.pressed(KeyCode::Up) {
             direction.0 = MoveDirection::LeftUp;
             return;
