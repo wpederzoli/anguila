@@ -3,14 +3,14 @@ use bevy::{
     sprite::{Sprite, SpriteBundle},
 };
 
-use crate::board::is_border_collision;
+use crate::board::{is_border_collision, CELL_SIZE};
 
 pub const ANGUILA_WIDTH: f32 = 20.0;
 pub const ANGUILA_HEIGHT: f32 = 20.0;
 const ANGUILA_SPEED: f32 = 1.0;
 const DIAGONAL_SPEED: f32 = ANGUILA_SPEED * 0.75;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum MoveDirection {
     Up,
     Down,
@@ -28,6 +28,9 @@ pub struct Anguila;
 #[derive(Component)]
 pub struct Direction(pub MoveDirection);
 
+#[derive(Component)]
+pub struct Position(pub Vec2, pub MoveDirection);
+
 pub fn setup_anguila(mut commands: Commands) {
     commands.spawn((
         {
@@ -44,14 +47,21 @@ pub fn setup_anguila(mut commands: Commands) {
             }
         },
         Anguila,
+        Position(Vec2::new(0.0, 20.0), MoveDirection::Up),
         Direction(MoveDirection::Up),
     ));
 }
 
-pub fn move_anguila(mut anguila: Query<(&mut Transform, &Direction), With<Anguila>>) {
-    let (mut transform, direction) = anguila.single_mut();
+pub fn move_anguila(
+    mut anguila: Query<(&mut Transform, &mut Direction, &mut Position), With<Anguila>>,
+) {
+    let (mut transform, mut direction, mut position) = anguila.single_mut();
     if !is_border_collision(&transform.translation, &direction.0) {
         move_towards(&mut transform.translation, &direction.0);
+        if is_destination(&transform.translation, &position.0) {
+            position.0 = get_next_destination(&position.0, &position.1);
+            direction.0 = position.1;
+        }
     }
 }
 
@@ -77,5 +87,23 @@ pub fn move_towards(translation: &mut Vec3, direction: &MoveDirection) {
             translation.x += DIAGONAL_SPEED;
             translation.y -= DIAGONAL_SPEED;
         }
+    }
+}
+
+fn is_destination(position: &Vec3, destination: &Vec2) -> bool {
+    position.x == destination.x && position.y == destination.y
+}
+
+fn get_next_destination(current: &Vec2, direction: &MoveDirection) -> Vec2 {
+    //TODO: account for board size
+    match *direction {
+        MoveDirection::Up => Vec2::new(current.x, current.y + CELL_SIZE),
+        MoveDirection::Down => Vec2::new(current.x, current.y - CELL_SIZE),
+        MoveDirection::Left => Vec2::new(current.x - CELL_SIZE, current.y),
+        MoveDirection::Right => Vec2::new(current.x + CELL_SIZE, current.y),
+        MoveDirection::LeftUp => Vec2::new(current.x - CELL_SIZE, current.y + CELL_SIZE),
+        MoveDirection::RightUp => Vec2::new(current.x + CELL_SIZE, current.y + CELL_SIZE),
+        MoveDirection::LeftDown => Vec2::new(current.x - CELL_SIZE, current.y - CELL_SIZE),
+        MoveDirection::RightDown => Vec2::new(current.x + CELL_SIZE, current.y - CELL_SIZE),
     }
 }
