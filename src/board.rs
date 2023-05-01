@@ -6,9 +6,9 @@ use bevy::{
 
 use crate::anguila::{MoveDirection, ANGUILA_WIDTH};
 
-const CELL_SIZE: f32 = ANGUILA_WIDTH;
-const BOARD_WIDTH: i32 = 10;
-const BOARD_HEIGHT: i32 = 10;
+pub const CELL_SIZE: f32 = ANGUILA_WIDTH;
+pub const BOARD_WIDTH: i32 = 10;
+pub const BOARD_HEIGHT: i32 = 10;
 
 pub fn init_board(mut commands: Commands) {
     for row in 0..BOARD_WIDTH {
