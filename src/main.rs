@@ -11,6 +11,7 @@ use anguila::{move_anguila, setup_anguila};
 use board::init_board;
 use collision::target_collision;
 use input::handle_input;
+use segment::move_segments;
 use targets::{spawn_targets, SPAWN_TIME};
 
 fn main() {
@@ -28,6 +29,7 @@ fn main() {
         .add_system(move_anguila)
         .add_system(handle_input)
         .add_system(target_collision)
+        .add_system(move_segments)
         .add_system(spawn_targets.in_schedule(CoreSchedule::FixedUpdate))
         .insert_resource(FixedTime::new_from_secs(SPAWN_TIME))
         .add_system(close_on_esc)

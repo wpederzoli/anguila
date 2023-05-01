@@ -8,8 +8,8 @@ use rand::Rng;
 use crate::anguila::{MoveDirection, ANGUILA_WIDTH};
 
 pub const CELL_SIZE: f32 = ANGUILA_WIDTH;
-pub const BOARD_WIDTH: i32 = 5;
-pub const BOARD_HEIGHT: i32 = 5;
+pub const BOARD_WIDTH: i32 = 10;
+pub const BOARD_HEIGHT: i32 = 10;
 
 pub fn init_board(mut commands: Commands) {
     for row in 0..BOARD_WIDTH {
@@ -21,8 +21,8 @@ pub fn init_board(mut commands: Commands) {
             commands.spawn(SpriteBundle {
                 sprite: Sprite {
                     color: Color::Rgba {
-                        red: rand_color,
-                        green: rand_color,
+                        red: 0.0,
+                        green: 0.0,
                         blue: rand_color,
                         alpha: 1.0,
                     },

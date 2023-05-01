@@ -10,6 +10,7 @@ pub const ANGUILA_HEIGHT: f32 = 20.0;
 const ANGUILA_SPEED: f32 = 1.0;
 const DIAGONAL_SPEED: f32 = ANGUILA_SPEED * 0.75;
 
+//TODO: Remove diagonal movement for v1
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum MoveDirection {
     Up,
@@ -90,12 +91,11 @@ pub fn move_towards(translation: &mut Vec3, direction: &MoveDirection) {
     }
 }
 
-fn is_destination(position: &Vec3, destination: &Vec2) -> bool {
+pub fn is_destination(position: &Vec3, destination: &Vec2) -> bool {
     position.x == destination.x && position.y == destination.y
 }
 
-fn get_next_destination(current: &Vec2, direction: &MoveDirection) -> Vec2 {
-    //TODO: account for board size
+pub fn get_next_destination(current: &Vec2, direction: &MoveDirection) -> Vec2 {
     match *direction {
         MoveDirection::Up => Vec2::new(current.x, current.y + CELL_SIZE),
         MoveDirection::Down => Vec2::new(current.x, current.y - CELL_SIZE),

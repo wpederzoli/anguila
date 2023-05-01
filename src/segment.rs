@@ -1,5 +1,6 @@
 use crate::anguila::{
-    move_towards, Anguila, Direction, MoveDirection, ANGUILA_HEIGHT, ANGUILA_WIDTH,
+    get_next_destination, is_destination, move_towards, Anguila, Direction, MoveDirection,
+    ANGUILA_HEIGHT, ANGUILA_WIDTH,
 };
 use bevy::{
     prelude::{default, Color, Commands, Component, Query, Transform, Vec2, Vec3, With, Without},
@@ -28,48 +29,23 @@ pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDir
             },
             ..default()
         },
+        Direction(*direction),
         new_segment,
     ));
 }
 
 pub fn move_segments(
-    mut segments: Query<(&mut Transform, &mut Segment), Without<Anguila>>,
-    player: Query<(&Transform, &Direction), With<Anguila>>,
+    mut segments: Query<(&mut Transform, &mut Direction, &mut Segment), Without<Anguila>>,
 ) {
-    let (player_pos, player_dir) = player.single();
-    let mut next_pos = player_pos.translation;
-    let mut next_dir = player_dir.0;
-
-    for (mut pos, mut segment) in &mut segments {
-        let last_pos = Vec3::new(segment.0.x, segment.0.y, 0.0);
-        let last_dir = segment.1;
-        let destination = Vec3::new(segment.0.x, segment.0.y, 0.0);
-        let distance = pos.translation - destination;
-        if distance.abs().length() != 0. {
-            move_towards(&mut pos.translation, &segment.1);
-        } else {
-            println!("change direction");
-            segment.0 = Vec2::new(next_pos.x, next_pos.y);
-            segment.1 = next_dir;
-            pos.translation = get_spawn_position(&next_pos, &next_dir);
-            move_towards(&mut pos.translation, &segment.1);
+    for (mut transform, mut direction, mut segment) in &mut segments {
+        if is_destination(&transform.translation, &segment.0) {
+            segment.0 = get_next_destination(&segment.0, &segment.1);
+            direction.0 = segment.1;
         }
 
-        next_pos = get_next_position(&last_pos, &last_dir);
-        next_dir = last_dir;
+        move_towards(&mut transform.translation, &direction.0);
     }
 }
-
-// pub fn update_segment_dest(mut query: Query<&mut Segment>) {
-//     if let Some(mut initial_segment) = query.iter().next() {
-//         for (mut segment) in query.iter_mut() {
-//             if initial_segment.1 == segment.1 {
-//                 segment.0 = initial_segment.0;
-//             }
-//             initial_segment = segment;
-//         }
-//     }
-// }
 
 fn get_spawn_position(position: &Vec3, direction: &MoveDirection) -> Vec3 {
     match direction {
