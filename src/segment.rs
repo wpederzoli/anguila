@@ -55,8 +55,19 @@ pub fn move_segments(
             move_towards(&mut pos.translation, &segment.1);
         }
 
-        next_pos = last_pos;
+        next_pos = get_next_position(&last_pos, &last_dir);
         next_dir = last_dir;
+    }
+}
+
+pub fn update_segment_dest(mut query: Query<&mut Segment>) {
+    if let Some(mut initial_segment) = query.iter().next() {
+        for (mut segment) in query.iter_mut() {
+            if initial_segment.1 == segment.1 {
+                segment.0 = initial_segment.0;
+            }
+            initial_segment = segment;
+        }
     }
 }
 

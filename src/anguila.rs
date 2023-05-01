@@ -3,7 +3,7 @@ use bevy::{
     sprite::{Sprite, SpriteBundle},
 };
 
-use crate::segment::Segment;
+use crate::board::is_border_collision;
 
 pub const ANGUILA_WIDTH: f32 = 20.0;
 pub const ANGUILA_HEIGHT: f32 = 20.0;
@@ -48,17 +48,11 @@ pub fn setup_anguila(mut commands: Commands) {
     ));
 }
 
-pub fn move_anguila(
-    mut anguila: Query<(&mut Transform, &Direction), With<Anguila>>,
-    mut segments: Query<&mut Segment>,
-) {
+pub fn move_anguila(mut anguila: Query<(&mut Transform, &Direction), With<Anguila>>) {
     let (mut transform, direction) = anguila.single_mut();
-    if let Some(mut segment) = segments.iter_mut().next() {
-        if segment.1 == direction.0 {
-            segment.0 = Vec2::new(transform.translation.x, transform.translation.y);
-        }
+    if !is_border_collision(&transform.translation, &direction.0) {
+        move_towards(&mut transform.translation, &direction.0);
     }
-    move_towards(&mut transform.translation, &direction.0);
 }
 
 pub fn move_towards(translation: &mut Vec3, direction: &MoveDirection) {
