@@ -17,12 +17,9 @@ pub fn spawn_targets(mut commands: Commands) {
     let spawn = rand::thread_rng().gen_range(0..2);
 
     if spawn > 0 {
-        let mut spawn_x = rand::thread_rng().gen_range(0..BOARD_WIDTH * CELL_SIZE as i32); // TODO: account for window width
-        let mut spawn_y = rand::thread_rng().gen_range(0..BOARD_HEIGHT * CELL_SIZE as i32); // TODO: account for window height
-        spawn_x = ((spawn_x as i32 / CELL_SIZE as i32) * CELL_SIZE as i32) + CELL_SIZE as i32 / 2;
-        spawn_y = ((spawn_y as i32 / CELL_SIZE as i32) * CELL_SIZE as i32) + CELL_SIZE as i32 / 2;
+        let spawn_x = (rand::thread_rng().gen_range(0..BOARD_WIDTH) as f32) * CELL_SIZE; // TODO: account for window width
+        let spawn_y = (rand::thread_rng().gen_range(0..BOARD_HEIGHT) as f32) * CELL_SIZE; // TODO: account for window height
 
-        println!("x: {}, y: {}", spawn_x, spawn_y);
         commands.spawn((
             SpriteBundle {
                 sprite: Sprite {
@@ -31,7 +28,7 @@ pub fn spawn_targets(mut commands: Commands) {
                 },
                 transform: Transform {
                     scale: Vec3::new(TARGET_WIDTH, TARGET_HEIGHT, 0.0),
-                    translation: Vec3::new(spawn_x as f32, spawn_y as f32, 0.0),
+                    translation: Vec3::new(spawn_x, spawn_y, 0.0),
                     ..default()
                 },
                 ..default()

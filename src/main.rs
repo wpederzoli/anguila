@@ -4,6 +4,7 @@ mod anguila;
 mod board;
 mod collision;
 mod input;
+mod segment;
 mod targets;
 
 use anguila::{move_anguila, setup_anguila};
@@ -26,6 +27,7 @@ fn main() {
         .add_startup_system(setup_anguila)
         .add_system(move_anguila)
         .add_system(handle_input)
+        .add_system(target_collision)
         .add_system(spawn_targets.in_schedule(CoreSchedule::FixedUpdate))
         .insert_resource(FixedTime::new_from_secs(SPAWN_TIME))
         .add_system(close_on_esc)

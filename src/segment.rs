@@ -60,16 +60,16 @@ pub fn move_segments(
     }
 }
 
-pub fn update_segment_dest(mut query: Query<&mut Segment>) {
-    if let Some(mut initial_segment) = query.iter().next() {
-        for (mut segment) in query.iter_mut() {
-            if initial_segment.1 == segment.1 {
-                segment.0 = initial_segment.0;
-            }
-            initial_segment = segment;
-        }
-    }
-}
+// pub fn update_segment_dest(mut query: Query<&mut Segment>) {
+//     if let Some(mut initial_segment) = query.iter().next() {
+//         for (mut segment) in query.iter_mut() {
+//             if initial_segment.1 == segment.1 {
+//                 segment.0 = initial_segment.0;
+//             }
+//             initial_segment = segment;
+//         }
+//     }
+// }
 
 fn get_spawn_position(position: &Vec3, direction: &MoveDirection) -> Vec3 {
     match direction {

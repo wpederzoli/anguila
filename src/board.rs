@@ -3,12 +3,13 @@ use bevy::{
     sprite::{Sprite, SpriteBundle},
     utils::default,
 };
+use rand::Rng;
 
 use crate::anguila::{MoveDirection, ANGUILA_WIDTH};
 
 pub const CELL_SIZE: f32 = ANGUILA_WIDTH;
-pub const BOARD_WIDTH: i32 = 10;
-pub const BOARD_HEIGHT: i32 = 10;
+pub const BOARD_WIDTH: i32 = 5;
+pub const BOARD_HEIGHT: i32 = 5;
 
 pub fn init_board(mut commands: Commands) {
     for row in 0..BOARD_WIDTH {
@@ -16,9 +17,15 @@ pub fn init_board(mut commands: Commands) {
             let x = col as f32 * CELL_SIZE;
             let y = row as f32 * CELL_SIZE;
 
+            let rand_color = rand::thread_rng().gen_range(0.0..1.0);
             commands.spawn(SpriteBundle {
                 sprite: Sprite {
-                    color: Color::ANTIQUE_WHITE,
+                    color: Color::Rgba {
+                        red: rand_color,
+                        green: rand_color,
+                        blue: rand_color,
+                        alpha: 1.0,
+                    },
                     ..default()
                 },
                 transform: Transform {

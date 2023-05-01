@@ -5,6 +5,7 @@ use bevy::{
 
 use crate::{
     anguila::{Anguila, Direction, ANGUILA_HEIGHT, ANGUILA_WIDTH},
+    segment::add_segment,
     targets::{Target, TARGET_HEIGHT, TARGET_WIDTH},
 };
 
@@ -18,6 +19,7 @@ pub fn target_collision(
         if is_colliding(&target_pos.translation, &player_pos.translation) {
             commands.entity(entity).remove::<SpriteBundle>();
             commands.entity(entity).remove::<Target>();
+            add_segment(&mut commands, &target_pos.translation, &player_dir.0)
         }
     }
 }
