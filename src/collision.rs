@@ -1,3 +1,5 @@
+use std::ops::Div;
+
 use bevy::{
     prelude::{Commands, Entity, Query, Transform, Vec3, With},
     sprite::SpriteBundle,
@@ -5,6 +7,7 @@ use bevy::{
 
 use crate::{
     anguila::{Anguila, Direction, ANGUILA_HEIGHT, ANGUILA_WIDTH},
+    board::CELL_SIZE,
     segment::add_segment,
     targets::{Target, TARGET_HEIGHT, TARGET_WIDTH},
 };
@@ -19,7 +22,8 @@ pub fn target_collision(
         if is_colliding(&target_pos.translation, &player_pos.translation) {
             commands.entity(entity).remove::<SpriteBundle>();
             commands.entity(entity).remove::<Target>();
-            add_segment(&mut commands, &target_pos.translation, &player_dir.0)
+
+            add_segment(&mut commands, &target_pos.translation, &player_dir.0);
         }
     }
 }

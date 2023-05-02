@@ -1,14 +1,11 @@
 use crate::anguila::{
     get_next_destination, is_destination, move_towards, Anguila, Direction, MoveDirection,
-    ANGUILA_HEIGHT, ANGUILA_WIDTH,
+    Position, ANGUILA_HEIGHT, ANGUILA_WIDTH,
 };
 use bevy::{
     prelude::{default, Color, Commands, Component, Query, Transform, Vec2, Vec3, With, Without},
     sprite::{Sprite, SpriteBundle},
 };
-
-const SEGMENT_WIDTH: f32 = 12.0;
-const SEGMENT_HEIGHT: f32 = 12.0;
 
 #[derive(Component, Clone, Copy)]
 pub struct Segment(pub Vec2, pub MoveDirection);
@@ -20,10 +17,11 @@ pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDir
         SpriteBundle {
             sprite: Sprite {
                 color: Color::rgba(0.1, 0.7, 0.3, 0.2),
+                custom_size: Some(Vec2::new(0.5, 0.5)),
                 ..default()
             },
             transform: Transform {
-                scale: Vec3::new(SEGMENT_WIDTH, SEGMENT_HEIGHT, 0.0),
+                scale: Vec3::new(ANGUILA_WIDTH, ANGUILA_HEIGHT, 0.0),
                 translation: get_spawn_position(&position, &direction),
                 ..default()
             },
@@ -34,16 +32,32 @@ pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDir
     ));
 }
 
-pub fn move_segments(
-    mut segments: Query<(&mut Transform, &mut Direction, &mut Segment), Without<Anguila>>,
-) {
-    for (mut transform, mut direction, mut segment) in &mut segments {
-        if is_destination(&transform.translation, &segment.0) {
-            segment.0 = get_next_destination(&segment.0, &segment.1);
-            direction.0 = segment.1;
+pub fn move_segments(mut segments: Query<(&mut Transform, &mut Direction, &mut Segment)>) {
+    let mut iter = segments.iter_mut();
+    if let Some(mut segment) = iter.next() {
+        let mut current_segment = segment;
+        while let Some(mut next_segment) = iter.next() {
+            if is_destination(&current_segment.0.translation, &current_segment.2 .0) {
+                println!("reached destination");
+                next_segment.2 .0 = current_segment.2 .0;
+                next_segment.2 .1 = current_segment.2 .1;
+                current_segment.2 .0 = get_next_destination(
+                    &Vec2::new(
+                        current_segment.0.translation.x,
+                        current_segment.0.translation.y,
+                    ),
+                    &current_segment.2 .1,
+                );
+                current_segment.1 .0 = current_segment.2 .1;
+            }
+            move_towards(&mut current_segment.0.translation, &current_segment.1 .0);
+            current_segment = next_segment;
         }
 
-        move_towards(&mut transform.translation, &direction.0);
+        if is_destination(&current_segment.0.translation, &current_segment.2 .0) {
+            println!("reached destination no more segments");
+        }
+        move_towards(&mut current_segment.0.translation, &current_segment.1 .0);
     }
 }
 

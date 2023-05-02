@@ -3,11 +3,14 @@ use bevy::{
     sprite::{Sprite, SpriteBundle},
 };
 
-use crate::board::{is_border_collision, CELL_SIZE};
+use crate::{
+    board::{is_border_collision, CELL_SIZE},
+    segment::Segment,
+};
 
 pub const ANGUILA_WIDTH: f32 = 20.0;
 pub const ANGUILA_HEIGHT: f32 = 20.0;
-const ANGUILA_SPEED: f32 = 1.0;
+const ANGUILA_SPEED: f32 = 1.;
 const DIAGONAL_SPEED: f32 = ANGUILA_SPEED * 0.75;
 
 //TODO: Remove diagonal movement for v1
@@ -55,6 +58,7 @@ pub fn setup_anguila(mut commands: Commands) {
 
 pub fn move_anguila(
     mut anguila: Query<(&mut Transform, &mut Direction, &mut Position), With<Anguila>>,
+    mut segment: Query<&mut Segment>,
 ) {
     let (mut transform, mut direction, mut position) = anguila.single_mut();
     if !is_border_collision(&transform.translation, &direction.0) {
