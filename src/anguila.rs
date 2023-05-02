@@ -10,7 +10,7 @@ use crate::{
 
 pub const ANGUILA_WIDTH: f32 = 20.0;
 pub const ANGUILA_HEIGHT: f32 = 20.0;
-const ANGUILA_SPEED: f32 = 1.;
+const ANGUILA_SPEED: f32 = 2.;
 const DIAGONAL_SPEED: f32 = ANGUILA_SPEED * 0.75;
 
 //TODO: Remove diagonal movement for v1
@@ -66,6 +66,10 @@ pub fn move_anguila(
         if is_destination(&transform.translation, &position.0) {
             position.0 = get_next_destination(&position.0, &position.1);
             direction.0 = position.1;
+
+            if let Some(mut segment) = segment.iter_mut().next() {
+                segment.1 = direction.0;
+            }
         }
     }
 }

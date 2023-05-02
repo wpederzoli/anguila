@@ -10,8 +10,20 @@ use bevy::{
 #[derive(Component, Clone, Copy)]
 pub struct Segment(pub Vec2, pub MoveDirection);
 
-pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDirection) {
-    let new_segment = Segment(Vec2::new(position.x, position.y), *direction);
+pub fn add_segment(
+    commands: &mut Commands,
+    position: &Vec3,
+    direction: &MoveDirection,
+    segments: &Query<(&Transform, &Direction), With<Segment>>,
+) {
+    let mut pos = *position;
+    let mut dir = *direction;
+    if let Some(segment) = segments.iter().last() {
+        pos = segment.0.translation;
+        dir = segment.1 .0;
+    }
+
+    let new_segment = Segment(Vec2::new(pos.x, pos.y), dir);
 
     commands.spawn((
         SpriteBundle {
@@ -22,42 +34,36 @@ pub fn add_segment(commands: &mut Commands, position: &Vec3, direction: &MoveDir
             },
             transform: Transform {
                 scale: Vec3::new(ANGUILA_WIDTH, ANGUILA_HEIGHT, 0.0),
-                translation: get_spawn_position(&position, &direction),
+                translation: get_spawn_position(&pos, &dir),
                 ..default()
             },
             ..default()
         },
-        Direction(*direction),
+        Direction(dir),
         new_segment,
     ));
 }
 
 pub fn move_segments(mut segments: Query<(&mut Transform, &mut Direction, &mut Segment)>) {
     let mut iter = segments.iter_mut();
-    if let Some(mut segment) = iter.next() {
-        let mut current_segment = segment;
-        while let Some(mut next_segment) = iter.next() {
-            if is_destination(&current_segment.0.translation, &current_segment.2 .0) {
-                println!("reached destination");
-                next_segment.2 .0 = current_segment.2 .0;
-                next_segment.2 .1 = current_segment.2 .1;
-                current_segment.2 .0 = get_next_destination(
-                    &Vec2::new(
-                        current_segment.0.translation.x,
-                        current_segment.0.translation.y,
-                    ),
-                    &current_segment.2 .1,
-                );
-                current_segment.1 .0 = current_segment.2 .1;
+    while let Some(mut segment) = iter.next() {
+        if is_destination(&segment.0.translation, &segment.2 .0) {
+            println!("reached destination: {}", segment.0.translation);
+            let last_dest = segment.2 .0;
+            let last_dir = segment.1 .0;
+            segment.2 .0 = get_next_destination(&segment.2 .0, &segment.2 .1);
+            segment.1 .0 = segment.2 .1;
+            if let Some(mut s) = iter.next() {
+                println!("set next dest: {:?}", last_dest);
+                s.1 .0 = last_dir;
+                s.2 .0 = last_dest;
+                s.2 .1 = segment.1 .0;
             }
-            move_towards(&mut current_segment.0.translation, &current_segment.1 .0);
-            current_segment = next_segment;
         }
+    }
 
-        if is_destination(&current_segment.0.translation, &current_segment.2 .0) {
-            println!("reached destination no more segments");
-        }
-        move_towards(&mut current_segment.0.translation, &current_segment.1 .0);
+    for (mut transform, direction, _) in &mut segments {
+        move_towards(&mut transform.translation, &direction.0);
     }
 }
 

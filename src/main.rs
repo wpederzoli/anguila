@@ -27,7 +27,7 @@ fn main() {
         .add_startup_system(init_board)
         .add_startup_system(setup_anguila)
         .add_system(move_anguila)
-        .add_system(handle_input)
+        .add_system(handle_input.before(move_anguila))
         .add_system(target_collision)
         .add_system(move_segments)
         .add_system(spawn_targets.in_schedule(CoreSchedule::FixedUpdate))

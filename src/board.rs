@@ -8,8 +8,8 @@ use rand::Rng;
 use crate::anguila::{MoveDirection, ANGUILA_WIDTH};
 
 pub const CELL_SIZE: f32 = ANGUILA_WIDTH;
-pub const BOARD_WIDTH: i32 = 5;
-pub const BOARD_HEIGHT: i32 = 5;
+pub const BOARD_WIDTH: i32 = 20;
+pub const BOARD_HEIGHT: i32 = 20;
 
 pub fn init_board(mut commands: Commands) {
     for row in 0..BOARD_WIDTH {
