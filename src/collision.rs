@@ -1,5 +1,3 @@
-use std::ops::Div;
-
 use bevy::{
     prelude::{Commands, Entity, Query, Transform, Vec3, With},
     sprite::SpriteBundle,
@@ -7,7 +5,6 @@ use bevy::{
 
 use crate::{
     anguila::{Anguila, Direction, ANGUILA_HEIGHT, ANGUILA_WIDTH},
-    board::CELL_SIZE,
     segment::{add_segment, Segment},
     targets::{Target, TARGET_HEIGHT, TARGET_WIDTH},
 };
