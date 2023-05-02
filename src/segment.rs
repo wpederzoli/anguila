@@ -53,7 +53,10 @@ pub fn move_segments(mut segments: Query<(&mut Transform, &mut Direction, &mut S
             segment.2 .0 = get_next_destination(&segment.2 .0, &segment.2 .1);
             segment.1 .0 = segment.2 .1;
             if let Some(mut s) = iter.next() {
-                s.0.translation = s.0.translation.floor();
+                // s.0.translation = s.0.translation.floor();
+                if s.0.translation.distance(segment.0.translation) > ANGUILA_WIDTH {
+                    s.0.translation = get_spawn_position(&segment.0.translation, &segment.1 .0);
+                }
                 s.1 .0 = last_dir;
                 s.2 .0 = last_dest;
                 s.2 .1 = segment.1 .0;
