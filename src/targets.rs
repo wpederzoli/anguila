@@ -17,8 +17,10 @@ pub fn spawn_targets(mut commands: Commands) {
     let spawn = rand::thread_rng().gen_range(0..2);
 
     if spawn > 0 {
-        let spawn_x = (rand::thread_rng().gen_range(0..BOARD_WIDTH) as f32) * CELL_SIZE; // TODO: account for window width
-        let spawn_y = (rand::thread_rng().gen_range(0..BOARD_HEIGHT) as f32) * CELL_SIZE; // TODO: account for window height
+        let spawn_x =
+            (rand::thread_rng().gen_range(-BOARD_WIDTH / 2..BOARD_WIDTH / 2) as f32) * CELL_SIZE;
+        let spawn_y =
+            (rand::thread_rng().gen_range(-BOARD_HEIGHT / 2..BOARD_HEIGHT / 2) as f32) * CELL_SIZE;
 
         commands.spawn((
             SpriteBundle {
