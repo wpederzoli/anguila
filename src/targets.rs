@@ -4,7 +4,9 @@ use bevy::{
 };
 use rand::Rng;
 
-pub const SPAWN_TIME: f32 = 3.0;
+use crate::board::{BOARD_HEIGHT, BOARD_WIDTH, CELL_SIZE};
+
+pub const SPAWN_TIME: f32 = 2.0;
 pub const TARGET_WIDTH: f32 = 5.0;
 pub const TARGET_HEIGHT: f32 = 5.0;
 
@@ -15,12 +17,13 @@ pub fn spawn_targets(mut commands: Commands) {
     let spawn = rand::thread_rng().gen_range(0..2);
 
     if spawn > 0 {
-        let spawn_x = rand::thread_rng().gen_range(-100..100) as f32; // TODO: account for window width
-        let spawn_y = rand::thread_rng().gen_range(-100..100) as f32; // TODO: account for window height
+        let spawn_x = (rand::thread_rng().gen_range(0..BOARD_WIDTH) as f32) * CELL_SIZE; // TODO: account for window width
+        let spawn_y = (rand::thread_rng().gen_range(0..BOARD_HEIGHT) as f32) * CELL_SIZE; // TODO: account for window height
+
         commands.spawn((
             SpriteBundle {
                 sprite: Sprite {
-                    color: Color::rgba(0.1, 0.4, 0.8, 0.8),
+                    color: Color::RED,
                     ..default()
                 },
                 transform: Transform {
