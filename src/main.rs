@@ -1,4 +1,7 @@
-use bevy::{prelude::*, window::close_on_esc};
+use bevy::{
+    prelude::*,
+    window::{close_on_esc, WindowMode},
+};
 
 mod anguila;
 mod board;
@@ -19,6 +22,8 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Anguila".to_string(),
+                mode: WindowMode::BorderlessFullscreen,
+                transparent: true,
                 ..default()
             }),
             ..default()
@@ -32,6 +37,7 @@ fn main() {
         .add_system(move_segments)
         .add_system(spawn_targets.in_schedule(CoreSchedule::FixedUpdate))
         .insert_resource(FixedTime::new_from_secs(SPAWN_TIME))
+        .insert_resource(ClearColor(Color::NONE))
         .add_system(close_on_esc)
         .run();
 }

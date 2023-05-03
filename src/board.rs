@@ -24,7 +24,7 @@ pub fn init_board(mut commands: Commands) {
                         red: 0.0,
                         green: 0.0,
                         blue: rand_color,
-                        alpha: 1.0,
+                        alpha: 0.75,
                     },
                     ..default()
                 },

@@ -28,7 +28,7 @@ pub fn add_segment(
     commands.spawn((
         SpriteBundle {
             sprite: Sprite {
-                color: Color::rgba(0.1, 0.7, 0.3, 0.2),
+                color: Color::rgba(0.1, 0.7, 0.3, 0.8),
                 custom_size: Some(Vec2::new(0.5, 0.5)),
                 ..default()
             },
