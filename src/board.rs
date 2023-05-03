@@ -13,7 +13,7 @@ pub const BOARD_HEIGHT: i32 = 20;
 pub fn init_board(mut commands: Commands) {
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            color: Color::rgba(0.2, 0.3, 0.6, 0.6),
+            color: Color::rgba(0.2, 0.3, 0.6, 0.0),
             ..default()
         },
         transform: Transform {

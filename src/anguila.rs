@@ -40,6 +40,7 @@ pub fn setup_anguila(mut commands: Commands) {
                 },
                 transform: Transform {
                     scale: Vec3::new(ANGUILA_WIDTH, ANGUILA_HEIGHT, 0.0),
+                    translation: Vec3::new(0.0, 0.0, 1.0),
                     ..default()
                 },
                 ..default()
