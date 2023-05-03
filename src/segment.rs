@@ -76,25 +76,5 @@ fn get_spawn_position(position: &Vec3, direction: &MoveDirection) -> Vec3 {
         MoveDirection::Down => Vec3::new(position.x, position.y + ANGUILA_HEIGHT / 2., 0.0),
         MoveDirection::Left => Vec3::new(position.x + ANGUILA_WIDTH / 2., position.y, 0.0),
         MoveDirection::Right => Vec3::new(position.x - ANGUILA_WIDTH / 2., position.y, 0.0),
-        MoveDirection::LeftUp => Vec3::new(
-            position.x + ANGUILA_WIDTH / 2.,
-            position.y - ANGUILA_HEIGHT / 2.,
-            0.0,
-        ),
-        MoveDirection::RightUp => Vec3::new(
-            position.x - ANGUILA_WIDTH / 2.,
-            position.y - ANGUILA_HEIGHT / 2.,
-            0.0,
-        ),
-        MoveDirection::LeftDown => Vec3::new(
-            position.x - ANGUILA_WIDTH / 2.,
-            position.y + ANGUILA_HEIGHT / 2.,
-            0.0,
-        ),
-        MoveDirection::RightDown => Vec3::new(
-            position.x + ANGUILA_WIDTH / 2.,
-            position.y + ANGUILA_HEIGHT / 2.,
-            0.0,
-        ),
     }
 }
