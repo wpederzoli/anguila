@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --verbose
       - name: Check
         run: cargo check -v
       - name: Code style
