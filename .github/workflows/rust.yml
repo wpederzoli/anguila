@@ -1,0 +1,36 @@
+name: Rust
+
+on:
+  pull_request:
+    branches: ["master"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Cargo Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build
+        run: cargo build --verbose
+      - name: Check
+        run: cargo check -v
+      - name: Code style
+        run: cargo clippy -v
+      - name: Run tests
+        run: cargo test --verbose

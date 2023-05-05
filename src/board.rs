@@ -31,33 +31,13 @@ pub fn init_board(mut commands: Commands) {
 
 pub fn is_border_collision(position: &Vec3, direction: &MoveDirection) -> bool {
     match *direction {
-        MoveDirection::Up => {
-            if position.y + ANGUILA_WIDTH > BOARD_HEIGHT as f32 / 2.0 * CELL_SIZE {
-                return true;
-            }
-
-            return false;
-        }
+        MoveDirection::Up => position.y + ANGUILA_WIDTH > BOARD_HEIGHT as f32 / 2.0 * CELL_SIZE,
         MoveDirection::Down => {
-            if position.y - ANGUILA_WIDTH < -BOARD_HEIGHT as f32 / 2.0 * CELL_SIZE - CELL_SIZE {
-                return true;
-            } else {
-                return false;
-            }
+            position.y - ANGUILA_WIDTH < -BOARD_HEIGHT as f32 / 2.0 * CELL_SIZE - CELL_SIZE
         }
         MoveDirection::Left => {
-            if position.x - ANGUILA_WIDTH < (-BOARD_WIDTH as f32 / 2.0 * CELL_SIZE) - CELL_SIZE {
-                return true;
-            } else {
-                return false;
-            }
+            position.x - ANGUILA_WIDTH < (-BOARD_WIDTH as f32 / 2.0 * CELL_SIZE) - CELL_SIZE
         }
-        MoveDirection::Right => {
-            if position.x + ANGUILA_WIDTH > BOARD_WIDTH as f32 / 2.0 * CELL_SIZE {
-                return true;
-            } else {
-                return false;
-            }
-        }
+        MoveDirection::Right => position.x + ANGUILA_WIDTH > BOARD_WIDTH as f32 / 2.0 * CELL_SIZE,
     }
 }
