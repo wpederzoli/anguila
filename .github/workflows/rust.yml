@@ -22,7 +22,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: 1.25
+          toolchain: 1.68.1
           override: true
           components: rustfmt, clippy
 
