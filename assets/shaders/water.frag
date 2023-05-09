@@ -39,7 +39,8 @@ float noise(in vec2 st) {
 void main(){
   vec2 st = gl_FragCoord.xy/u_resolution;
   vec2 pos = vec2(st*12.0);
-  vec4 color = u_color * draw_area(v_position.xy, vec2(0.42, 0.75), vec2(-0.01, -0.02));
+  //vec4 color = u_color * draw_area(v_position.xy, vec2(0.42, 0.75), vec2(-0.01, -0.02));
+  vec4 color = u_color * draw_area(st, vec2((u_size.x * 2./u_resolution.x), (u_size.y * 2./u_resolution.y)), vec2(0.99,1.02));
   float n = noise(pos);
 
   vec4 c = color * smoothstep(color.b, .3, noise(st*80.));
