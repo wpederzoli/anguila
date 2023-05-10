@@ -40,7 +40,10 @@ void main(){
   vec2 st = gl_FragCoord.xy/u_resolution;
   vec2 pos = vec2(st*12.0);
   //vec4 color = u_color * draw_area(v_position.xy, vec2(0.42, 0.75), vec2(-0.01, -0.02));
-  vec4 color = u_color * draw_area(st, vec2((u_size.x * 2./u_resolution.x), (u_size.y * 2./u_resolution.y)), vec2(0.99,1.02));
+  //vec4 color = u_color * draw_area(st, vec2((u_size.x * 2./u_resolution.x), (u_size.y * 2./u_resolution.y)), vec2(0.988,1.02));
+  // Metal uses fom 0. to 2. as the size
+  vec4 color = u_color * step(1.0 - (u_size.x/u_resolution.x), st.x) * step(st.x, 1.0 + (u_size.x/u_resolution.x)); 
+  color *= step(1.0 - (u_size.y/u_resolution.y), st.y) * step(st.y, 1.0 + (u_size.y/u_resolution.y));
   float n = noise(pos);
 
   vec4 c = color * smoothstep(color.b, .3, noise(st*80.));
