@@ -8,26 +8,18 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  CARGO_HOME: /.cargo
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    container:
+      image: rust:1.69.0
+      env:
+        CARGO_HOME: /.cargo
+
     steps:
-      - name: Install dependencies
-        run: sudo apt-get install libasound2-dev libudev-dev
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Rust
-        uses: ATiltedTree/setup-rust@v1
-        with:
-          rust-version: 1.69.0
-          components: clippy rustfmt
-
-      - name: Set up cargo cache
+      - name: Cache
         uses: actions/cache@v3
         continue-on-error: false
         with:
@@ -37,8 +29,18 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: apt-get update && apt-get install -y libasound2-dev libudev-dev
+
+      - name: Install components
+        run: rustup component add clippy rustfmt
+
       - name: Get version
         run: app_version=$(cat Cargo.toml | grep version | cut -d '"' -f2)
+
       - name: Code style
         run: cargo clippy
       - name: Run tests
@@ -51,3 +53,4 @@ jobs:
         with:
          name: "anguila-$app_version"
          path: target/release/anguila
+
