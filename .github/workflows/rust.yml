@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  CARGO_HOME: /.cargo
 
 jobs:
   build:
@@ -15,8 +16,6 @@ jobs:
 
     container:
       image: rust:1.69.0
-      env:
-        CARGO_HOME: /.cargo
 
     steps:
       - name: Cache
@@ -49,15 +48,15 @@ jobs:
         run: cargo build --release
       
       - name: Prepare artifacts
-        run: mkdir release && cp -a target/release/anguila /release
+        run: mkdir /release -vp && mv -v target/release/anguila /release/anguila-$app_version
       
       - name: Tar artifacts
-        run: tar -cvf /release-$app_version.tar /release
+        run: tar -cvf /release.tar /release
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
          name: "anguila"
-         path: /release-*.tar
+         path: /release.tar
          retention-days: 30
 
