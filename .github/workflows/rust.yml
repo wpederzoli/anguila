@@ -1,9 +1,10 @@
 name: Rust CI
 
 on:
-  branches:
-    - 'master'
-    - 'ci'
+  push:
+    branches:
+      - 'master'
+      - 'ci'
 
 env:
   CARGO_TERM_COLOR: always
