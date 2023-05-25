@@ -1,4 +1,4 @@
-name: Rust CI ok
+name: Rust CI
 
 on:
   push:
