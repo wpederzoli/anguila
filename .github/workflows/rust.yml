@@ -1,4 +1,4 @@
-name: Anguila CI final
+name: Anguila CI
 
 on:
   push:
