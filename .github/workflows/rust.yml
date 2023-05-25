@@ -1,4 +1,4 @@
-name: Rust CI a
+name: Anguila CI
 
 on:
   push:
