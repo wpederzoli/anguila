@@ -6,16 +6,17 @@ on:
       - 'master'
       - 'ci'
 
-env:
-  CARGO_TERM_COLOR: always
-  CARGO_HOME: ~/.cargo
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     container:
       image: rust:1.69.0
+      env:
+        CARGO_TERM_COLOR: always
+        CARGO_HOME: /.cargo
+      volumes:
+        - /.cargo:/.cargo
 
     steps:
       - name: Cache
@@ -23,8 +24,7 @@ jobs:
         continue-on-error: false
         with:
           path: |
-            ~/.cargo
-            /root/.cargo
+            /.cargo
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
@@ -39,7 +39,7 @@ jobs:
         run: rustup component add clippy rustfmt
 
       - name: Get version
-        run: export app_version=$(cat Cargo.toml | grep version | cut -d '"' -f2)
+        run: export app_version=$(cat Cargo.toml | grep version | cut -d '"' -f2) && echo $app_version
 
       - name: Code style
         run: cargo clippy
@@ -49,7 +49,7 @@ jobs:
         run: cargo build --release
       
       - name: Prepare artifacts
-        run: "mkdir /release -vp && mv -v target/release/anguila /release/anguila-$app_version"
+        run: mkdir /release -vp && mv -v target/release/anguila /release/anguila-$app_version
       
       - name: Tar artifacts
         run: tar -cvf /release.tar /release
