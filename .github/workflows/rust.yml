@@ -24,7 +24,7 @@ jobs:
         continue-on-error: false
         with:
           path: |
-            ~/.cargo/
+            /.cargo/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
@@ -39,7 +39,7 @@ jobs:
         run: rustup component add clippy rustfmt
 
       - name: Get version
-        run: app_version=$(cat Cargo.toml | grep version | cut -d '"' -f2)
+        run: export app_version=$(cat Cargo.toml | grep version | cut -d '"' -f2)
 
       - name: Code style
         run: cargo clippy
@@ -47,10 +47,17 @@ jobs:
         run: cargo test --verbose
       - name: Build
         run: cargo build --release
+      
+      - name: Prepare artifacts
+        run: mkdir release && cp -a target/release/anguila /release
+      
+      - name: Tar artifacts
+        run: tar -cvf /release-$app_version.tar /release
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-         name: "anguila-$app_version"
-         path: target/release/anguila
+         name: "anguila"
+         path: /release-*.tar
+         retention-days: 30
 
