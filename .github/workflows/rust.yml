@@ -22,12 +22,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: ATiltedTree/setup-rust@v1
         with:
-          profile: minimal
-          toolchain: 1.69.0
-          override: true
-          components: rustfmt, clippy
+          rust-version: 1.69.0
+          components: clippy, rustfmt
 
       - name: Set up cargo cache
         uses: actions/cache@v3
