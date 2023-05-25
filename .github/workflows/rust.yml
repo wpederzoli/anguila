@@ -15,8 +15,10 @@ jobs:
       env:
         CARGO_TERM_COLOR: always
         CARGO_HOME: /.cargo
+        CARGO_TARGET_DIR: /.app-target
       volumes:
         - /.cargo:/.cargo
+        - /.app-target:/.app-target
 
     steps:
       - name: Cache
@@ -25,7 +27,7 @@ jobs:
         with:
           path: |
             /.cargo
-            target
+            /.app-target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
@@ -49,7 +51,7 @@ jobs:
         run: cargo build --release
       
       - name: Prepare artifacts
-        run: mkdir /release -vp && mv -v target/release/anguila /release/anguila-$app_version
+        run: mkdir /release -vp && mv -v /.app-target/release/anguila /release/anguila-$app_version
       
       - name: Tar artifacts
         run: tar -cvf /release.tar /release
