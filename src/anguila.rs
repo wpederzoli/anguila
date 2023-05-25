@@ -12,7 +12,7 @@ pub const ANGUILA_WIDTH: f32 = 20.0;
 pub const ANGUILA_HEIGHT: f32 = 20.0;
 const ANGUILA_SPEED: f32 = 2.;
 
-//TODO: Remove diagonal movement for v1
+//TODO: plx Remove diagonal movement for v1
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum MoveDirection {
     Up,
