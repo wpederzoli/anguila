@@ -1,47 +1,66 @@
-name: Rust
+name: Anguila CI
 
 on:
   pull_request:
     branches: ["master"]
-
-env:
-  CARGO_TERM_COLOR: always
+  push:
+    branches:
+      - 'master'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    container:
+      image: rust:1.69.0
+      env:
+        CARGO_TERM_COLOR: always
+        CARGO_HOME: /.cargo
+        CARGO_TARGET_DIR: /.app-target
+      volumes:
+        - /.cargo:/.cargo
+        - /.app-target:/.app-target
+
     steps:
-      - name: Install dependencies
-        run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: 1.68.1
-          override: true
-          components: rustfmt, clippy
-
-      - name: Set up cargo cache
+      - name: Cache
         uses: actions/cache@v3
         continue-on-error: false
         with:
           path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
+            /.cargo
+            /.app-target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
 
-      - name: Check
-        run: cargo check
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: apt-get update && apt-get install -y libasound2-dev libudev-dev
+
+      - name: Install components
+        run: rustup component add clippy rustfmt
+
+      - name: Get version
+        run: export app_version=$(cat Cargo.toml | grep version | cut -d '"' -f2) && echo $app_version
+
       - name: Code style
         run: cargo clippy
       - name: Run tests
         run: cargo test --verbose
+      - name: Build
+        run: cargo build --release
+      
+      - name: Prepare artifacts
+        run: mkdir /release -vp && mv -v /.app-target/release/anguila /release/anguila-$app_version
+      
+      - name: Tar artifacts
+        run: tar -cvf /release.tar /release
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+         name: "anguila"
+         path: /release.tar
+         retention-days: 3
+
